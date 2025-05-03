@@ -204,6 +204,7 @@ async function scrapePageData(page, targetUrl) {
         let successCount = 0;
         let failCount = 0;
         for (const [index, targetUrl] of link.entries()) {
+            if(index == 2) vreak;
             console.log(`\n[${index + 1}/${link.length}] 처리 시작: ${targetUrl}`);
             if (targetUrl === 'https://www.ftc.go.kr/bizCommPop.do?wrkr_no=2208802594') {
                 continue;
