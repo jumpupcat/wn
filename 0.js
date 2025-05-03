@@ -144,7 +144,7 @@ async function getElementCount(page, selector) {
       console.log(`${hrefs.length}개의 링크를 ${outputFilename} 파일에 저장했습니다.`);
   } catch (err) {
       console.error(`${outputFilename} 파일 저장 중 오류 발생:`, err);
-   }
+  }
 
   // 5) 브라우저 닫기
   console.log('브라우저를 닫습니다.');
