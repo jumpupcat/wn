@@ -13,13 +13,7 @@ function sleep(ms) {
 
   // 2) 페이지 이동 (첫 화면만 가져옴)
   await page.goto(
-    // 'https://page.kakao.com/landing/genre/11/86',
-    // 'https://page.kakao.com/landing/genre/11/120',
-    // 'https://page.kakao.com/landing/genre/11/89',
-    // 'https://page.kakao.com/landing/genre/11/117',
-    // 'https://page.kakao.com/landing/genre/11/87',
-    // 'https://page.kakao.com/landing/genre/11/123',
-    'https://page.kakao.com/landing/genre/11/125',
+    'https://page.kakao.com/landing/genre/11',
     { waitUntil: 'networkidle2' }
   );
 
@@ -39,14 +33,13 @@ function sleep(ms) {
 
   // 브라우저 컨텍스트에서 실행될 함수
   const hrefs = await page.evaluate(() => {
-    const selector = 'a.cursor-pointer:not(:has(img[alt="19세"]))';
-    // const selector = 'a.cursor-pointer:has(img[alt="새 회차 뱃지"])';
+    // const selector = 'a.cursor-pointer:not(:has(img[alt="19세"]))';
+    const selector = 'a.cursor-pointer:has(img[alt="새 회차 뱃지"])';
     const anchors = document.querySelectorAll(selector);
     return Array.from(anchors).map(anchor => anchor.href);
   });
 
-  console.log(hrefs.length);
-  fs.writeFileSync('7.json', JSON.stringify(hrefs, null, 4));
+  fs.writeFileSync('link.json', JSON.stringify(hrefs, null, 4));
 
   await browser.close();
 })();
