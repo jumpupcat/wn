@@ -185,10 +185,9 @@ async function scrapePageData(page, targetUrl) {
 (async () => {
     let browser = null;
     let link = [];
+    const cnt = Number(fs.readFileSync('cnt'))
 
     try {
-        const cnt = Number(fs.readFileSync('cnt'))
-        console.log(cnt)
 
         console.log("링크 파일 읽기 시작...");
         link = JSON.parse(fs.readFileSync(cnt+'.json')); // 파일명 확인!
@@ -204,7 +203,7 @@ async function scrapePageData(page, targetUrl) {
         let successCount = 0;
         let failCount = 0;
         for (const [index, targetUrl] of link.entries()) {
-            if(index == 2) vreak;
+            if(index == 2) break;
             console.log(`\n[${index + 1}/${link.length}] 처리 시작: ${targetUrl}`);
             if (targetUrl === 'https://www.ftc.go.kr/bizCommPop.do?wrkr_no=2208802594') {
                 continue;
