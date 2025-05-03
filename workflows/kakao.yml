@@ -1,0 +1,33 @@
+name: kakao
+
+on: 
+  # schedule:
+  #   - cron: '*/5 * * * *'
+  push:
+    branches: ["main"]
+jobs:
+  cron:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@master
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@master
+        with:
+          node-version: 18.x
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: get kakao
+        run: node kakao.js
+
+      - name: Push Github
+        run: |
+          git config --global user.name "jumpupcat"
+          git config --global user.email "jumpupmoon@gmail.com"
+          git pull origin main
+          git add .
+          git commit -m "cron get kakao" || exit 0
+          git push
