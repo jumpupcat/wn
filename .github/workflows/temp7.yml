@@ -1,8 +1,8 @@
-name: temp4
+name: temp7
 
 on: 
   workflow_run:
-    workflows: ["temp3"]
+    workflows: ["temp6"]
     types:
       - completed
 jobs:
