@@ -1,7 +1,10 @@
 name: temp4
 
-on:
-  workflow_dispatch:
+on: 
+  workflow_run:
+    workflows: ["temp3"]
+    types:
+      - completed
 
 jobs:
   cron:

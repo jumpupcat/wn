@@ -2,7 +2,7 @@ name: temp1
 
 on: 
   workflow_run:
-    workflows: ["temp2"]
+    workflows: ["kakao"]
     types:
       - completed
 jobs:
