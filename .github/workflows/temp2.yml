@@ -1,12 +1,8 @@
-name: kakao
+name: temp2
 
 on: 
-  # schedule:
-  #   - cron: '48 */6 * * *'
-  push:
-    branches: ["main"]
   workflow_run:
-    workflows: ["temp1"]
+    workflows: ["temp3"]
     types:
       - completed
 jobs:

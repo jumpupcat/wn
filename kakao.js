@@ -169,7 +169,7 @@ async function scrapePageData(page, targetUrl) {
                 throw dbError; // 트랜잭션 롤백을 위해 에러 다시 던지기 (선택 사항)
             }
         } else {
-            console.warn(`  [DB 저장 건너<0xEB><0x9B><0x81] 데이터 불완전. id: ${finalDataForDb?.id}`);
+            console.warn(`  [DB 저장 데이터 불완전. id: ${finalDataForDb?.id}`);
              // 실패로 간주하고 싶다면 여기서 에러 throw
         }
 
@@ -187,8 +187,10 @@ async function scrapePageData(page, targetUrl) {
     let link = [];
 
     try {
+        const cnt = Number(fs.readFileSync('cnt'))
+
         console.log("링크 파일 읽기 시작...");
-        link = JSON.parse(fs.readFileSync('6.json')); // 파일명 확인!
+        link = JSON.parse(fs.readFileSync(cnt+'.json')); // 파일명 확인!
         console.log(`${link.length}개의 URL을 읽었습니다.`);
 
         console.log("Puppeteer 브라우저 실행 중...");
@@ -244,5 +246,7 @@ async function scrapePageData(page, targetUrl) {
             });
         }
         console.log("스크립트 완전 종료.");
+
+        fs.writeFileSync('cnt', cnt+1+'');
     }
 })();
