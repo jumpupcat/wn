@@ -188,6 +188,7 @@ async function scrapePageData(page, targetUrl) {
 
     try {
         const cnt = Number(fs.readFileSync('cnt'))
+        console.log(cnt)
 
         console.log("링크 파일 읽기 시작...");
         link = JSON.parse(fs.readFileSync(cnt+'.json')); // 파일명 확인!
