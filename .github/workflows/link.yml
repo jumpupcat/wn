@@ -1,10 +1,8 @@
-name: temp11
+name: link
 
 on: 
-  workflow_run:
-    workflows: ["temp10"]
-    types:
-      - completed
+  schedule:
+    - cron: '48 */6 * * *'
 jobs:
   cron:
     runs-on: ubuntu-22.04
@@ -20,8 +18,8 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: get kakao
-        run: node kakao.js
+      - name: get link
+        run: node link.js
 
       - name: Push Github
         run: |
@@ -29,5 +27,5 @@ jobs:
           git config --global user.email "jumpupmoon@gmail.com"
           git pull origin main
           git add .
-          git commit -m "cron get kakao" || exit 0
+          git commit -m "cron get link" || exit 0
           git push

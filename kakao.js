@@ -190,6 +190,7 @@ async function scrapePageData(page, targetUrl) {
     try {
 
         console.log("링크 파일 읽기 시작...");
+        // link = JSON.parse(fs.readFileSync('link.json')); // 파일명 확인!
         link = JSON.parse(fs.readFileSync(cnt+'.json')); // 파일명 확인!
         console.log(`${link.length}개의 URL을 읽었습니다.`);
 
