@@ -5,6 +5,10 @@ on:
     - cron: '4 */1 * * *'
   push:
     branches: ["main"]
+  # workflow_run:
+  #   workflows: ["link"]
+  #   types:
+  #     - completed
 jobs:
   cron:
     runs-on: ubuntu-22.04
