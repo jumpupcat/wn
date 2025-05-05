@@ -186,9 +186,7 @@ async function scrapePageData(page, targetUrl) {
     let link = [];
 
     try {
-
         // 최신화 필요한 데이터
-        // const sqlQuery = `SELECT id FROM contents WHERE schedule != '완결'`;
         const sqlQuery = `
             SELECT id FROM contents WHERE author is null OR author = ''
             OR cover is null OR cover = '' OR genre is null OR genre = ''
@@ -199,7 +197,7 @@ async function scrapePageData(page, targetUrl) {
                 AND currentEp is not null 
                 AND cover like 'https://dn-img%'
             )
-            LIMIT 10
+            LIMIT 1000
         `;
         console.log(`실행할 쿼리: ${sqlQuery}`);
 
