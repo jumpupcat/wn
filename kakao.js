@@ -157,6 +157,7 @@ async function scrapePageData(page, targetUrl) {
             currentEp: rawData.currentEp
         };
         // --- 데이터 변환 종료 ---
+        console.log(finalDataForDb)
 
         // --- SQLite에 저장 ---
         if (finalDataForDb && finalDataForDb.id != null && db && upsertStmt) {
@@ -192,13 +193,13 @@ async function scrapePageData(page, targetUrl) {
             OR cover is null OR cover = '' OR genre is null OR genre = ''
             OR views is null OR views = '' OR schedule is null OR schedule = ''
             OR startDate is null OR currentEp is null
-            OR (
-                startDate is not null 
-                AND currentEp is not null 
-                AND cover like 'https://dn-img%'
-            )
-            LIMIT 1500
+            LIMIT 15
         `;
+        // OR (
+        //     startDate is not null 
+        //     AND currentEp is not null 
+        //     AND cover like 'https://dn-img%'
+        // )
         console.log(`실행할 쿼리: ${sqlQuery}`);
 
         // 쿼리를 준비하고 모든 결과를 가져옵니다.
