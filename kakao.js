@@ -184,13 +184,41 @@ async function scrapePageData(page, targetUrl) {
 (async () => {
     let browser = null;
     let link = [];
-    const cnt = Number(fs.readFileSync('cnt'))
 
     try {
 
+        // 최신화 필요한 데이터
+        // const sqlQuery = `SELECT id FROM contents WHERE schedule != '완결'`;
+        const sqlQuery = `
+            SELECT id FROM contents WHERE author is null OR author = ''
+            OR cover is null OR cover = '' OR genre is null OR genre = ''
+            OR views is null OR views = '' OR schedule is null OR schedule = ''
+            OR startDate is null OR currentEp is null
+            OR (
+                startDate is not null 
+                AND currentEp is not null 
+                AND cover like 'https://dn-img%'
+            )
+            LIMIT 10
+        `;
+        console.log(`실행할 쿼리: ${sqlQuery}`);
+
+        // 쿼리를 준비하고 모든 결과를 가져옵니다.
+        // .all() 메서드는 결과 행 객체들의 배열을 반환합니다. 예: [{ id: 1 }, { id: 5 }, { id: 10 }]
+        const rows = db.prepare(sqlQuery).all();
+
+        // 각 결과 객체에서 'id' 속성만 추출하여 새 배열을 만듭니다.
+        const allIds = rows.map(row => row.id);
+
+        console.log(`\n총 ${allIds.length}개의 ID를 가져왔습니다.`);
+
+        for(const id of allIds) {
+            link.push('https://page.kakao.com/content/'+id)
+        }
+        // 최신화 필요한 데이터 끝
+
         console.log("링크 파일 읽기 시작...");
         // link = JSON.parse(fs.readFileSync('link.json')); // 파일명 확인!
-        link = JSON.parse(fs.readFileSync(cnt+'.json')); // 파일명 확인!
         console.log(`${link.length}개의 URL을 읽었습니다.`);
 
         console.log("Puppeteer 브라우저 실행 중...");
@@ -216,7 +244,7 @@ async function scrapePageData(page, targetUrl) {
                      console.log(`  [DB 저장 완료] id ${scrapedData.id}`); // DB 저장 로그는 여기서 출력
                     successCount++;
                 } else {
-                    failCount++;
+                    break;
                 }
             } catch (pageError) {
                 console.error(`  URL 처리 중 오류 발생 (${targetUrl}):`, pageError);
@@ -230,8 +258,6 @@ async function scrapePageData(page, targetUrl) {
         console.log("\n모든 URL 처리 완료. 데이터베이스 트랜잭션 커밋 중...");
         db.exec('COMMIT'); // 성공적으로 루프 완료 시 커밋
         console.log(`트랜잭션 커밋 완료. 성공: ${successCount}, 실패: ${failCount}`);
-
-        fs.writeFileSync('cnt', cnt+1+'');
     } catch (error) {
         console.error("\n스크립트 메인 실행 중 오류 발생:", error);
         if (db && db.inTransaction) {
