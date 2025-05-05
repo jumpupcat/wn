@@ -111,7 +111,8 @@ async function scrapePageData(page, targetUrl) {
         } catch (e) { console.error(`    ID 추출 오류 (${targetUrl}): ${e.message}`); throw e; }
 
         // 나머지 데이터 추출
-        rawData.cover = await safeGetAttribute('meta[property="og:image"]', 'content');
+        rawData.cover = await safeGetAttribute('img[alt="썸네일"]', 'src');
+        if(rawData.cover[0] == '/') rawData.cover = 'https:'+rawData.cover;
         rawData.title = await safeGetAttribute('meta[property="og:title"]', 'content');
         rawData.author = await safeGetAttribute('meta[name="author"]', 'content');
         try {
@@ -124,7 +125,8 @@ async function scrapePageData(page, targetUrl) {
         try {
             const totalEpText = await safeGetText('span.font-small2-bold.text-el-70:last-child');
             if (totalEpText && totalEpText.includes("전체")) {
-                const match = totalEpText.match(/\d+/);
+                const cleanedText = totalEpText.replace(/,/g, ''); 
+                const match = cleanedText.match(/\d+/);
                 rawData.currentEp = match ? parseInt(match[0], 10) : null;
             } else { rawData.currentEp = null; }
         } catch (error) { rawData.currentEp = null; }
@@ -192,13 +194,13 @@ async function scrapePageData(page, targetUrl) {
             OR cover is null OR cover = '' OR genre is null OR genre = ''
             OR views is null OR views = '' OR schedule is null OR schedule = ''
             OR startDate is null OR currentEp is null
+            OR (
+                startDate is not null 
+                AND currentEp is not null 
+                AND cover like 'https://dn-img%'
+            )
             LIMIT 1000
         `;
-        // OR (
-        //     startDate is not null 
-        //     AND currentEp is not null 
-        //     AND cover like 'https://dn-img%'
-        // )
         console.log(`실행할 쿼리: ${sqlQuery}`);
 
         // 쿼리를 준비하고 모든 결과를 가져옵니다.
