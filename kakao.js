@@ -231,6 +231,7 @@ async function scrapePageData(page, targetUrl) {
         db.exec('COMMIT'); // 성공적으로 루프 완료 시 커밋
         console.log(`트랜잭션 커밋 완료. 성공: ${successCount}, 실패: ${failCount}`);
 
+        fs.writeFileSync('cnt', cnt+1+'');
     } catch (error) {
         console.error("\n스크립트 메인 실행 중 오류 발생:", error);
         if (db && db.inTransaction) {
@@ -246,7 +247,5 @@ async function scrapePageData(page, targetUrl) {
             });
         }
         console.log("스크립트 완전 종료.");
-
-        fs.writeFileSync('cnt', cnt+1+'');
     }
 })();

@@ -1,12 +1,8 @@
 name: kakao
 
 on: 
-  # workflow_run:
-  #   workflows: ["link"]
-  #   types:
-  #     - completed
-  push:
-    branches: ["main"]
+  schedule:
+    - cron: '4 */1 * * *'
 jobs:
   cron:
     runs-on: ubuntu-22.04
