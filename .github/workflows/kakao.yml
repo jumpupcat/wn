@@ -3,8 +3,8 @@ name: kakao
 on: 
   schedule:
     - cron: '4 */1 * * *'
-  push:
-    branches: ["main"]
+  # push:
+  #   branches: ["main"]
   # workflow_run:
   #   workflows: ["link"]
   #   types:
