@@ -146,6 +146,12 @@ async function getElementCount(page, selector) {
       console.error(`${outputFilename} 파일 저장 중 오류 발생:`, err);
   }
 
+  const allName = 'all.json';
+  const all = JSON.parse(fs.readFileSync(allName));
+
+  const uniqueSet = new Set([...all, ...hrefs]);
+  fs.writeFileSync(allName, JSON.stringify([...uniqueSet], null, 2), 'utf-8');
+
   // 5) 브라우저 닫기
   console.log('브라우저를 닫습니다.');
   await browser.close();
