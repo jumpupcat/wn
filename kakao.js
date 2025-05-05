@@ -4,10 +4,6 @@ const Database = require('better-sqlite3');
 const path = require('path');
 const fs = require('fs');
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 // --- 데이터 변환 헬퍼 함수 ---
 function parseViews(viewsText) {
     if (!viewsText || typeof viewsText !== 'string') return null;
@@ -95,8 +91,7 @@ async function scrapePageData(page, targetUrl) {
     let finalDataForDb = null;
 
     try {
-        await page.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
-        await sleep(200);
+        await page.goto(targetUrl, { waitUntil: 'networkidle2', timeout: 60000 });
 
         const safeGetText = async (selector) => {
             try { return await page.$eval(selector, el => el.innerText.trim()); }
