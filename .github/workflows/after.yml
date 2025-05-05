@@ -1,15 +1,11 @@
-name: kakao
+name: after
 
 on: 
-  schedule:
-    - cron: '4 */1 * * *'
   workflow_dispatch:
-  push:
-    branches: ["main"]
-  # workflow_run:
-  #   workflows: ["link"]
-  #   types:
-  #     - completed
+  workflow_run:
+    workflows: ["link"]
+    types:
+      - completed
 concurrency:
   group: ${{ github.repository }}
   cancel-in-progress: false
@@ -34,8 +30,8 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: get kakao
-        run: node kakao.js
+      - name: get after
+        run: node after.js
 
       - name: Push Github
         run: |
@@ -43,5 +39,5 @@ jobs:
           git config --global user.email "jumpupmoon@gmail.com"
           git pull origin main
           git add .
-          git commit -m "cron get kakao" || exit 0
+          git commit -m "cron get after" || exit 0
           git push
