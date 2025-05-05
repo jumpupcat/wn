@@ -197,7 +197,7 @@ async function scrapePageData(page, targetUrl) {
             OR (
                 startDate is not null 
                 AND currentEp is not null 
-                AND cover like 'https://dn-img%'
+                AND cover not like 'https://page-images%'
             )
             LIMIT 1000
         `;
