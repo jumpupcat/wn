@@ -212,7 +212,7 @@ async function scrapePageData(page, targetUrl) {
                 AND currentEp is not null 
                 AND cover not like 'https://page-images%'
             )
-            LIMIT 1000
+            OR currentEp = 1
         `;
         console.log(`실행할 쿼리: ${sqlQuery}`);
 

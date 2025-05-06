@@ -123,7 +123,7 @@ async function getElementCount(page, selector) {
               const anchors = document.querySelectorAll(finalSelector);
               return Array.from(anchors)
                   .map(anchor => anchor.href)
-                  .filter(href => href);
+                  .filter(href => href != 'https://www.ftc.go.kr/bizCommPop.do?wrkr_no=2208802594');
           }, EXTRACTION_SELECTOR);
 
           console.log(`'${EXTRACTION_SELECTOR}' 기준으로 ${hrefs.length}개의 링크를 성공적으로 추출했습니다.`);
