@@ -176,15 +176,6 @@ async function scrapePageData(page, targetUrl) {
 
     } catch (error) {
         console.error(`  페이지 스크래핑/처리 오류 (${targetUrl}):`, error.message);
-
-        if(error.message.includes('Cannot read properties')) {
-            const parts = targetUrl.split('/');
-            const numericValue = parts[parts.length - 1];
-
-            db.exec('DELETE FROM contents WHERE id = '+numericValue);
-            console.log(numericValue)
-        }
-
         return null;
     }
     // 페이지 닫기는 메인 루프에서
