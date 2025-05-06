@@ -182,7 +182,11 @@ async function scrapePageData(page, targetUrl) {
             const numericValue = parts[parts.length - 1];
 
             db.exec('DELETE FROM contents WHERE id = '+numericValue);
-            console.log(numericValue)
+
+            const allName = 'all.json';
+            const allArr = JSON.parse(fs.readFileSync(allName));
+            const filAll = allArr.filter(a => !a.includes(numericValue));
+            fs.writeFileSync(allName, JSON.stringify(filAll, null, 2));
         }
         
         return null;
