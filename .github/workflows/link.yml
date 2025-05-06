@@ -3,6 +3,9 @@ name: link
 on: 
   schedule:
     - cron: '48 */6 * * *'
+concurrency:
+  group: ${{ github.repository }}
+  cancel-in-progress: false
 jobs:
   cron:
     runs-on: ubuntu-22.04

@@ -1,6 +1,8 @@
 // puppeteer_kakao_quick_test_v6_simplified.js
 const puppeteer = require('puppeteer');
 const fs = require('fs');
+const Database = require('better-sqlite3');
+const path = require('path');
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -29,8 +31,6 @@ async function getElementCount(page, selector) {
   console.log('브라우저를 실행합니다...');
   const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
-  await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
-
   const targetUrl = 'https://page.kakao.com/landing/genre/11';
   console.log(`페이지로 이동합니다: ${targetUrl}`);
   try {
@@ -64,10 +64,10 @@ async function getElementCount(page, selector) {
       if (previousScrollCtrlCount === -1) { console.log(`초기 '${SCROLL_CONTROL_SELECTOR}' 개수: ${currentScrollCtrlCount}`); }
 
       if (currentScrollCtrlCount === -1) {
-         console.log("스크롤 제어용 요소 개수 확인 중 오류 발생. 스크롤 중단.");
-         currentScrollCtrlCount = previousScrollCtrlCount > 0 ? previousScrollCtrlCount : 0;
-         loopError = new Error("GetElementCount failed"); // 오류 상태 기록
-         break;
+        console.log("스크롤 제어용 요소 개수 확인 중 오류 발생. 스크롤 중단.");
+        currentScrollCtrlCount = previousScrollCtrlCount > 0 ? previousScrollCtrlCount : 0;
+        loopError = new Error("GetElementCount failed"); // 오류 상태 기록
+        break;
       }
 
       // --- Simplified Stability Check ---
@@ -82,7 +82,7 @@ async function getElementCount(page, selector) {
           console.log('최종 스크롤 및 대기 완료. 루프 종료.');
           break; // 루프 탈출
         } else {
-           console.warn(`경고: '${SCROLL_CONTROL_SELECTOR}' 개수 감소 (${previousScrollCtrlCount} -> ${currentScrollCtrlCount}).`);
+          console.warn(`경고: '${SCROLL_CONTROL_SELECTOR}' 개수 감소 (${previousScrollCtrlCount} -> ${currentScrollCtrlCount}).`);
         }
       }
       // 다음 비교를 위해 현재 카운트를 이전 카운트로 업데이트
@@ -136,21 +136,30 @@ async function getElementCount(page, selector) {
   }
   // ---------------------------------------------
 
-
-  // 4) 결과 저장
-  const outputFilename = 'link.json'; // 파일명 변경
-  try {
-      fs.writeFileSync(outputFilename, JSON.stringify(hrefs, null, 2), 'utf-8');
-      console.log(`${hrefs.length}개의 링크를 ${outputFilename} 파일에 저장했습니다.`);
-  } catch (err) {
-      console.error(`${outputFilename} 파일 저장 중 오류 발생:`, err);
-  }
-
   const allName = 'all.json';
   const all = JSON.parse(fs.readFileSync(allName));
 
   const uniqueSet = new Set([...all, ...hrefs]);
   fs.writeFileSync(allName, JSON.stringify([...uniqueSet], null, 2), 'utf-8');
+
+
+  // const idString = targetUrl.split('/').pop();
+  const dbFilePath = path.resolve(__dirname, 'kakaopage.db'); // DB 파일명 변경
+  const db = new Database(dbFilePath);
+  const stmt = db.prepare(`
+    INSERT INTO contents (id, re)
+    VALUES (@id, 1)
+    ON CONFLICT(id) DO UPDATE SET re = 1
+  `);
+  
+  db.exec('BEGIN');
+
+  for(const href of hrefs) {
+    stmt.run({ id: href.split('/').pop() });
+  }
+
+  db.exec('COMMIT');
+  db.close();
 
   // 5) 브라우저 닫기
   console.log('브라우저를 닫습니다.');

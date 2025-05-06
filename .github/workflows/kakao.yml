@@ -2,6 +2,8 @@ name: kakao
 
 on: 
   workflow_dispatch:
+  schedule:
+    - cron: '14 */1 * * *'
 concurrency:
   group: ${{ github.repository }}
   cancel-in-progress: false
