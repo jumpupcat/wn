@@ -74,7 +74,7 @@ try {
         ON CONFLICT(id) DO UPDATE SET
             title=excluded.title, author=excluded.author, cover=excluded.cover, genre=excluded.genre,
             views=excluded.views, rating=excluded.rating, schedule=excluded.schedule,
-            startDate=excluded.startDate, currentEp=excluded.currentEp
+            startDate=excluded.startDate, currentEp=excluded.currentEp, re = null
     `);
     console.log("UPSERT SQL 구문 준비 완료.");
 
@@ -203,16 +203,8 @@ async function scrapePageData(page, targetUrl) {
     try {
         // 최신화 필요한 데이터
         const sqlQuery = `
-            SELECT id FROM contents WHERE author is null OR author = ''
-            OR cover is null OR cover = '' OR genre is null OR genre = ''
-            OR views is null OR views = '' OR schedule is null OR schedule = ''
-            OR startDate is null OR currentEp is null
-            OR (
-                startDate is not null 
-                AND currentEp is not null 
-                AND cover not like 'https://page-images%'
-            )
-            OR currentEp = 1
+            SELECT id FROM contents
+            WHERE re is not null
         `;
         console.log(`실행할 쿼리: ${sqlQuery}`);
 
