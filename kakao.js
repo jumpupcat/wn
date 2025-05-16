@@ -2,7 +2,6 @@
 const puppeteer = require('puppeteer');
 const Database = require('better-sqlite3');
 const path = require('path');
-const fs = require('fs');
 
 // --- 데이터 변환 헬퍼 함수 ---
 function parseViews(viewsText) {
@@ -196,11 +195,6 @@ async function scrapePageData(page, targetUrl) {
             const numericValue = parts[parts.length - 1];
 
             db.exec('DELETE FROM contents WHERE id = '+numericValue);
-
-            const allName = 'all.json';
-            const allArr = JSON.parse(fs.readFileSync(allName));
-            const filAll = allArr.filter(a => !a.includes(numericValue));
-            fs.writeFileSync(allName, JSON.stringify(filAll, null, 2));
         }
         
         return null;

@@ -1,6 +1,5 @@
 // puppeteer_kakao_quick_test_v6_simplified.js
 const puppeteer = require('puppeteer');
-const fs = require('fs');
 const Database = require('better-sqlite3');
 const path = require('path');
 
@@ -155,13 +154,6 @@ async function getElementCount(page, selector) {
       console.log("루프 중 오류가 발생하여 추출을 건너<0xEB><0x81>니다.");
   }
   // ---------------------------------------------
-
-  const allName = 'all.json';
-  const all = JSON.parse(fs.readFileSync(allName));
-
-  const uniqueSet = new Set([...all, ...hrefs]);
-  fs.writeFileSync(allName, JSON.stringify([...uniqueSet], null, 2), 'utf-8');
-
 
   // const idString = targetUrl.split('/').pop();
   const dbFilePath = path.resolve(__dirname, 'kakaopage.db'); // DB 파일명 변경
