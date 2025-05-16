@@ -69,12 +69,12 @@ try {
 
     // UPSERT 구문 준비 (변경 없음)
     upsertStmt = db.prepare(`
-        INSERT INTO contents (id, title, author, cover, genre, views, rating, schedule, startDate, currentEp)
-        VALUES (@id, @title, @author, @cover, @genre, @views, @rating, @schedule, @startDate, @currentEp)
+        INSERT INTO contents (id, title, author, cover, genre, views, rating, schedule, startDate, currentEp, manage)
+        VALUES (@id, @title, @author, @cover, @genre, @views, @rating, @schedule, @startDate, @currentEp, @manage)
         ON CONFLICT(id) DO UPDATE SET
             title=excluded.title, author=excluded.author, cover=excluded.cover, genre=excluded.genre,
             views=excluded.views, rating=excluded.rating, schedule=excluded.schedule,
-            startDate=excluded.startDate, currentEp=excluded.currentEp, re = null
+            startDate=excluded.startDate, currentEp=excluded.currentEp, re = null, manage=excluded.manage
     `);
     console.log("UPSERT SQL 구문 준비 완료.");
 
@@ -145,6 +145,19 @@ async function scrapePageData(page, targetUrl) {
             return dateText;
         });
 
+        //////
+        await page.goto(targetUrl+'?tab_type=about', { waitUntil: 'networkidle2', timeout: 60000 });
+        let manage = null;
+        manage = await page.evaluate(() => {
+            const spans = Array.from(document.querySelectorAll('span'));
+            const publisherLabelSpan = spans.find(span => span.innerText.trim() === '발행자');
+            
+            if (publisherLabelSpan && publisherLabelSpan.nextElementSibling) {
+                return publisherLabelSpan.nextElementSibling.innerText.trim();
+            }
+            return null;
+        });
+
         // --- 데이터 변환 ---
         finalDataForDb = {
             id: rawData.id,
@@ -156,7 +169,8 @@ async function scrapePageData(page, targetUrl) {
             rating: parseRating(rawData.ratingText),
             schedule: rawData.scheduleText && rawData.scheduleText.length >= 2 ? rawData.scheduleText.slice(-2) : (rawData.scheduleText || null),
             startDate: formatDateString(rawData.startDateText), // **날짜 변환 함수 사용**
-            currentEp: rawData.currentEp
+            currentEp: rawData.currentEp,
+            manage,
         };
         // --- 데이터 변환 종료 ---
 
