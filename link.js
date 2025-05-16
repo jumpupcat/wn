@@ -119,11 +119,31 @@ async function getElementCount(page, selector) {
   let hrefs = [];
   if (!loopError) { // 루프 중 심각한 오류가 없었을 경우에만 추출 시도
       try {
-          hrefs = await page.evaluate((finalSelector) => {
-              const anchors = document.querySelectorAll(finalSelector);
-              return Array.from(anchors)
-                  .map(anchor => anchor.href)
-                  .filter(href => href != 'https://www.ftc.go.kr/bizCommPop.do?wrkr_no=2208802594');
+          hrefs = await page.evaluate((anchorSelector) => {
+              const results = [];
+              const anchors = document.querySelectorAll(anchorSelector);
+
+              Array.from(anchors).forEach(anchor => {
+                  const href = anchor.href;
+
+                  if (href === 'https://www.ftc.go.kr/bizCommPop.do?wrkr_no=2208802594') {
+                      return; 
+                  }
+
+                  const titleWrapper = anchor.querySelector('div.jsx-2792908821.w-full.space-y-4pxr.pb-4pxr.pr-8pxr.pt-8pxr.h-76pxr'); // 제목을 포함하는 wrapper div
+                  if (titleWrapper) {
+                      const titleElement = titleWrapper.querySelector('div.font-small1.line-clamp-2.break-all.text-el-60');
+                      if (titleElement) {
+                          const title = titleElement.innerText.trim();
+
+                          if (title && !title.includes("단행")) {
+                              results.push(href);
+                          }
+                      }
+                  }
+              });
+
+              return results;
           }, EXTRACTION_SELECTOR);
 
           console.log(`'${EXTRACTION_SELECTOR}' 기준으로 ${hrefs.length}개의 링크를 성공적으로 추출했습니다.`);
