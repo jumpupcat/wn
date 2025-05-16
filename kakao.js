@@ -213,6 +213,7 @@ async function scrapePageData(page, targetUrl) {
         const sqlQuery = `
             SELECT id FROM contents
             WHERE re is not null
+            LIMIT 1000
         `;
         console.log(`실행할 쿼리: ${sqlQuery}`);
 
