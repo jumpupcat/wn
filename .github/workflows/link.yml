@@ -12,6 +12,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@master
+
+      - name: Fetch latest main branch
+        run: |
+          git fetch origin main
+          git checkout main
+          git reset --hard origin/main
       
       - name: Set up Node.js
         uses: actions/setup-node@master
